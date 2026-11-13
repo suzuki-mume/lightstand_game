@@ -93,6 +93,7 @@
     border:2px solid var(--line); background:#fff; color:var(--ink); cursor:pointer;
   }
   .btn.primary{background:var(--pink); border-color:var(--pink); color:#fff; box-shadow:0 3px 0 var(--pink-d)}
+  .btn.x{background:#000; border-color:#000; color:#fff; box-shadow:0 3px 0 #333}
   .btn:active{transform:translateY(2px)}
 </style>
 </head>
@@ -133,6 +134,7 @@
         <p class="tip hidden" id="rTip"></p>
         <div class="btns">
           <button class="btn primary" id="btnRetry">もう一回</button>
+          <button class="btn x" id="btnShare">𝕏 で共有</button>
           <button class="btn" id="btnSelect">ディフューザーをえらぶ</button>
         </div>
       </div>
@@ -899,6 +901,23 @@
   });
 
   $('btnRetry').addEventListener('click', () => startGame(S.stand));
+
+  $('btnShare').addEventListener('click', () => {
+    const st = S.stand;
+    const score = Math.floor(S.elapsed * 10) / 10;
+    let text;
+    if (gameMode === 'minute' && S.mode === 'clear') {
+      text = 'ライトスタンド、倒すな！🎬\n' + st.name + 'で1分チャレンジクリア！！🎉\n#ライトスタンド倒すな';
+    } else if (gameMode === 'minute') {
+      const left = Math.max(0, CONFIG.minuteGoal - score);
+      text = 'ライトスタンド、倒すな！🎬\n' + st.name + 'で' + score.toFixed(1) + '秒まで粘ったけど倒れた😭 あと' + left.toFixed(1) + '秒だったのに…\n#ライトスタンド倒すな';
+    } else {
+      text = 'ライトスタンド、倒すな！🎬\n' + st.name + 'で' + score.toFixed(1) + '秒キープしたよ！\n#ライトスタンド倒すな';
+    }
+    const shareUrl = 'https://lightstandgame.vercel.app/';
+    window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(shareUrl), '_blank', 'noopener,noreferrer');
+  });
+
   $('btnSelect').addEventListener('click', () => {
     S.mode = 'select';
     S.confetti = [];
