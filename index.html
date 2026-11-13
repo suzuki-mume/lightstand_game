@@ -134,7 +134,7 @@
         <p class="tip hidden" id="rTip"></p>
         <div class="btns">
           <button class="btn primary" id="btnRetry">もう一回</button>
-          <button class="btn x" id="btnShare">𝕏 で共有</button>
+          <a class="btn x" id="btnShare" href="#" target="_blank" rel="noopener noreferrer">𝕏 で共有</a>
           <button class="btn" id="btnSelect">ディフューザーをえらぶ</button>
         </div>
       </div>
@@ -577,6 +577,20 @@
     $('rNew').classList.toggle('hidden', !badge);
     $('rTip').textContent = tip || '';
     $('rTip').classList.toggle('hidden', !tip);
+
+    const score = Math.floor(S.elapsed * 10) / 10;
+    let shareText;
+    if (gameMode === 'minute' && S.mode === 'clear') {
+      shareText = 'ライトスタンド、倒すな！🎬\n' + st.name + 'で1分チャレンジクリア！！🎉\n#ライトスタンド倒すな';
+    } else if (gameMode === 'minute') {
+      const left = Math.max(0, CONFIG.minuteGoal - score);
+      shareText = 'ライトスタンド、倒すな！🎬\n' + st.name + 'で' + score.toFixed(1) + '秒まで粘ったけど倒れた😭 あと' + left.toFixed(1) + '秒だったのに…\n#ライトスタンド倒すな';
+    } else {
+      shareText = 'ライトスタンド、倒すな！🎬\n' + st.name + 'で' + score.toFixed(1) + '秒キープしたよ！\n#ライトスタンド倒すな';
+    }
+    const shareUrl = 'https://lightstandgame.vercel.app/';
+    $('btnShare').href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareText) + '&url=' + encodeURIComponent(shareUrl);
+
     show('ovOver');
   }
 
@@ -901,22 +915,6 @@
   });
 
   $('btnRetry').addEventListener('click', () => startGame(S.stand));
-
-  $('btnShare').addEventListener('click', () => {
-    const st = S.stand;
-    const score = Math.floor(S.elapsed * 10) / 10;
-    let text;
-    if (gameMode === 'minute' && S.mode === 'clear') {
-      text = 'ライトスタンド、倒すな！🎬\n' + st.name + 'で1分チャレンジクリア！！🎉\n#ライトスタンド倒すな';
-    } else if (gameMode === 'minute') {
-      const left = Math.max(0, CONFIG.minuteGoal - score);
-      text = 'ライトスタンド、倒すな！🎬\n' + st.name + 'で' + score.toFixed(1) + '秒まで粘ったけど倒れた😭 あと' + left.toFixed(1) + '秒だったのに…\n#ライトスタンド倒すな';
-    } else {
-      text = 'ライトスタンド、倒すな！🎬\n' + st.name + 'で' + score.toFixed(1) + '秒キープしたよ！\n#ライトスタンド倒すな';
-    }
-    const shareUrl = 'https://lightstandgame.vercel.app/';
-    window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(shareUrl), '_blank', 'noopener,noreferrer');
-  });
 
   $('btnSelect').addEventListener('click', () => {
     S.mode = 'select';
